@@ -78,7 +78,7 @@
         }
         .anim-bounce-side { animation: bounceSide 2s ease-in-out infinite; }
 
-        /* 🌟 新增：閃爍光澤動畫 (進度條使用) */
+        /* 閃爍光澤動畫 (進度條使用) */
         @keyframes shimmer {
             100% { transform: translateX(100%); }
         }
@@ -109,18 +109,17 @@
             filter: brightness(1.1);
         }
 
-        /* 🌟 感官友善 / 專注模式樣式 (Sensory-Friendly Mode) 🌟 */
+        /* 感官友善 / 專注模式樣式 (Sensory-Friendly Mode) */
         body.focus-mode {
-            background-color: #f3f4f6; /* 柔和暗灰底色 */
+            background-color: #f3f4f6; 
         }
         body.focus-mode .bg-pattern {
-            background-image: none !important; /* 移除花紋背景 */
+            background-image: none !important; 
         }
         body.focus-mode .intro-card-bg {
-            background: #ffffff !important; /* 移除漸層 */
+            background: #ffffff !important; 
             border-color: #e5e7eb !important;
         }
-        /* 關閉所有干擾動畫 */
         body.focus-mode .anim-float, 
         body.focus-mode .anim-pulse, 
         body.focus-mode .anim-bounce-side, 
@@ -128,12 +127,16 @@
             animation: none !important;
             transform: none !important;
         }
+
+        /* 模態框漸變動畫 */
+        .modal-enter { opacity: 1 !important; pointer-events: auto !important; }
+        .modal-enter > div { transform: scale(1) !important; }
     </style>
 </head>
 <body class="text-gray-800 flex flex-col lg:flex-row h-[100dvh] overflow-hidden bg-pattern" onclick="initAudio()">
 
     <!-- 左側邊欄 -->
-    <div class="w-full lg:w-72 bg-white shadow-xl flex flex-col z-10 lg:h-full border-b lg:border-r lg:border-b-0 border-gray-200 flex-shrink-0">
+    <div class="w-full lg:w-80 bg-white shadow-xl flex flex-col z-10 lg:h-[100dvh] border-b lg:border-r lg:border-b-0 border-gray-200 flex-shrink-0">
         <div class="p-3 lg:p-4 bg-amber-700 text-white shadow-md relative flex flex-col gap-2">
             <div class="flex justify-between items-center w-full">
                 <h1 class="text-xl font-bold tracking-widest text-center flex-1">詞彙遊樂園</h1>
@@ -144,7 +147,6 @@
             </div>
         </div>
         
-        <!-- 🌟 字詞難度分類器 -->
         <div class="flex gap-1 p-2 bg-amber-50 text-sm font-bold border-b border-amber-100 shadow-inner justify-around">
             <button onclick="filterDifficulty('all', this)" class="diff-btn flex-1 px-1 py-1 rounded-md text-amber-900 bg-amber-200 shadow-sm border border-amber-300 transition-all">全部</button>
             <button onclick="filterDifficulty(1, this)" class="diff-btn flex-1 px-1 py-1 rounded-md text-gray-500 hover:bg-amber-100 border border-transparent transition-all">⭐初階</button>
@@ -153,35 +155,32 @@
         </div>
 
         <ul id="word-list" class="flex flex-row lg:flex-col overflow-x-auto lg:overflow-y-auto no-scrollbar p-2 lg:p-3 gap-2 bg-[#faf8ec] lg:flex-1">
-            <!-- 詞語列表將由 JS 注入 -->
         </ul>
     </div>
 
     <!-- 右側主內容區 -->
-    <div class="flex-1 flex flex-col items-center p-4 lg:p-8 overflow-y-auto relative">
+    <div class="flex-1 h-[100dvh] overflow-y-auto p-4 md:p-8 lg:p-10 flex flex-col items-center relative">
         
-        <!-- 🌟 升級版頂部：星星分數、連擊徽章與視覺化進度條 -->
-        <div class="w-full max-w-4xl flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <!-- 頂部：星星分數與進度條 -->
+        <div class="w-full max-w-5xl 2xl:max-w-6xl flex flex-col md:flex-row justify-between items-center mb-4 md:mb-8 gap-3 md:gap-4 mx-auto">
             <div class="w-full md:w-2/3 flex flex-col gap-2">
                 <div class="flex justify-between items-end px-1">
-                    <div class="bg-yellow-100 border-2 border-yellow-400 rounded-full px-5 py-1.5 shadow-sm flex items-center gap-2">
-                        <span class="text-2xl filter drop-shadow-sm">⭐</span>
-                        <span class="font-bold text-yellow-700 text-xl tracking-wide">星星收集：<span id="score-display">0 / 134</span></span>
+                    <div class="bg-yellow-100 border-2 border-yellow-400 rounded-full px-4 py-1.5 shadow-sm flex items-center gap-2">
+                        <span class="text-xl md:text-2xl filter drop-shadow-sm">⭐</span>
+                        <span class="font-bold text-yellow-700 text-lg md:text-xl tracking-wide">收集：<span id="score-display" class="text-2xl ml-1">0</span></span>
                     </div>
-                    <!-- 🌟 微型獎勵：動態連擊徽章 -->
-                    <div id="combo-badge" class="hidden font-black text-white bg-gradient-to-r from-red-500 to-orange-500 px-4 py-1 rounded-full shadow-md transform rotate-2 z-50 text-xl border-2 border-white transition-all duration-300">
+                    <div id="combo-badge" class="hidden font-black text-white bg-gradient-to-r from-red-500 to-orange-500 px-4 py-1 rounded-full shadow-md transform rotate-2 z-50 text-lg md:text-xl border-2 border-white transition-all duration-300 whitespace-nowrap">
                         🔥 <span id="combo-count">2</span> 連擊！
                     </div>
                 </div>
-                <!-- 🌟 視覺化進度條 -->
-                <div class="w-full bg-white/80 rounded-full h-4 shadow-inner border border-yellow-200 overflow-hidden relative">
-                    <div id="score-progress-bar" class="bg-gradient-to-r from-yellow-300 to-yellow-500 h-full rounded-full transition-all duration-700 ease-out relative" style="width: 0%">
+                <div class="w-full bg-white/80 rounded-full h-3 md:h-4 shadow-inner border border-yellow-200 overflow-hidden relative">
+                    <div id="score-progress-bar" class="bg-gradient-to-r from-yellow-300 to-amber-500 h-full rounded-full transition-all duration-700 ease-out relative" style="width: 0%">
                         <div class="absolute top-0 left-0 bottom-0 right-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
                     </div>
                 </div>
             </div>
             
-            <div id="cheer-badge" class="hidden font-bold text-white bg-gradient-to-r from-orange-400 to-red-500 px-6 py-2 rounded-full shadow-lg transform -rotate-3 z-50 text-2xl">
+            <div id="cheer-badge" class="hidden font-bold text-white bg-gradient-to-r from-orange-400 to-red-500 px-6 py-2 rounded-full shadow-lg transform -rotate-3 z-50 text-xl md:text-2xl whitespace-nowrap">
                 太神啦！🔥
             </div>
         </div>
@@ -189,20 +188,15 @@
         <!-- ========================================== -->
         <!-- 階段一：視覺化情境引入區 -->
         <!-- ========================================== -->
-        <div id="intro-section" class="w-full max-w-3xl mt-8 flex flex-col items-center justify-center fade-in-up">
-            <div class="intro-card-bg border-4 border-teal-200 rounded-3xl p-8 shadow-xl w-full flex flex-col items-center text-center relative overflow-hidden transition-colors">
-                <span class="absolute top-4 left-4 bg-teal-500 text-white px-3 py-1 rounded-full font-bold text-sm shadow-sm tracking-widest">情境猜一猜</span>
+        <div id="intro-section" class="w-full max-w-4xl mx-auto mt-4 md:mt-10 flex flex-col items-center justify-center fade-in-up px-2">
+            <div class="intro-card-bg border-4 border-teal-200 rounded-3xl p-6 md:p-12 shadow-xl w-full flex flex-col items-center text-center relative overflow-hidden transition-colors">
+                <span class="absolute top-3 left-3 md:top-5 md:left-5 bg-teal-500 text-white px-3 py-1 rounded-full font-bold text-xs md:text-base shadow-sm tracking-widest">情境猜一猜</span>
                 
-                <div id="intro-visual" class="text-8xl md:text-9xl my-8 filter drop-shadow-xl anim-pulse">
-                </div>
+                <div id="intro-visual" class="text-7xl md:text-9xl my-8 md:my-10 filter drop-shadow-xl anim-pulse"></div>
+                <div id="intro-context" class="text-xl md:text-3xl text-gray-700 font-bold leading-relaxed mb-5 md:mb-8"></div>
+                <div id="intro-question" class="text-lg md:text-2xl text-teal-800 font-bold bg-white/70 px-4 py-3 md:px-8 md:py-5 rounded-2xl border border-teal-100 shadow-sm mb-6 md:mb-10 w-full max-w-2xl mx-auto"></div>
                 
-                <div id="intro-context" class="text-2xl md:text-3xl text-gray-700 font-bold leading-relaxed mb-6">
-                </div>
-                
-                <div id="intro-question" class="text-xl md:text-2xl text-teal-800 font-bold bg-white/70 px-6 py-4 rounded-2xl border border-teal-100 shadow-sm mb-8 w-full">
-                </div>
-                
-                <button onclick="revealWord()" class="bg-gradient-to-b from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-white text-2xl font-bold py-4 px-10 rounded-full shadow-lg transform transition-transform hover:scale-105 active:scale-95 flex items-center gap-2">
+                <button onclick="revealWord()" class="bg-gradient-to-b from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-white text-xl md:text-2xl font-bold py-3 px-8 md:py-5 md:px-12 rounded-full shadow-lg transform transition-transform hover:scale-105 active:scale-95 flex items-center gap-3">
                     <span>💡</span> 揭曉答案並學寫字
                 </button>
             </div>
@@ -211,19 +205,19 @@
         <!-- ========================================== -->
         <!-- 階段二：正式學習區 -->
         <!-- ========================================== -->
-        <div id="learning-section" class="w-full flex flex-col items-center hidden fade-in-up max-w-6xl pb-10">
+        <div id="learning-section" class="w-full flex flex-col items-center hidden fade-in-up max-w-5xl 2xl:max-w-6xl pb-10 px-1 sm:px-2 mx-auto">
             
-            <div class="mb-6 mt-2 w-full flex flex-col items-center">
-                <div id="word-display" class="text-6xl md:text-8xl kaishu flex space-x-3 md:space-x-6 justify-center flex-wrap gap-y-4 text-gray-800">
+            <div class="mb-4 md:mb-8 mt-2 w-full flex flex-col items-center">
+                <div id="word-display" class="text-5xl sm:text-6xl md:text-8xl kaishu flex space-x-3 md:space-x-6 justify-center flex-wrap gap-y-4 text-gray-800">
                 </div>
-                <div class="text-gray-500 mt-3 font-bold tracking-widest bg-white/80 px-4 py-1 rounded-full border border-gray-200 shadow-sm">👆 點擊上方單字來切換學習</div>
+                <div class="text-gray-500 mt-4 font-bold tracking-widest bg-white/80 px-5 py-1.5 rounded-full border border-gray-200 shadow-sm text-sm md:text-lg">👆 點擊上方單字來切換學習</div>
             </div>
 
             <!-- 第一區：單字特訓 -->
-            <div class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl p-5 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-6 lg:gap-8 w-full border-4 border-amber-100/50 mb-8 transition-colors">
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-xl p-4 sm:p-5 lg:p-10 flex flex-col lg:flex-row items-center lg:items-stretch gap-5 lg:gap-10 w-full border-4 border-amber-100/50 mb-6 md:mb-10 transition-colors">
                 
-                <div class="flex flex-col items-center justify-start flex-shrink-0">
-                    <div class="relative w-[280px] h-[280px] md:w-[320px] md:h-[320px] bg-white border-4 border-amber-700 rounded-xl shadow-md overflow-hidden" id="canvas-container">
+                <div class="flex flex-col items-center justify-start flex-shrink-0 w-full lg:w-[400px]">
+                    <div class="relative w-[260px] h-[260px] sm:w-[320px] sm:h-[320px] lg:w-[350px] lg:h-[350px] bg-white border-4 border-amber-700 rounded-xl shadow-md overflow-hidden" id="canvas-container">
                         <div class="absolute inset-0 pointer-events-none opacity-50">
                             <div class="w-full h-full border-b-2 border-dashed border-amber-300 absolute top-1/2 transform -translate-y-1/2"></div>
                             <div class="w-full h-full border-r-2 border-dashed border-amber-300 absolute left-1/2 transform -translate-x-1/2"></div>
@@ -233,64 +227,66 @@
                         <div id="character-canvas" class="absolute inset-0 z-10 cursor-pointer" style="touch-action: none;" title="點擊田字格進行書寫測驗！"></div>
                         
                         <div id="success-animation" class="absolute inset-0 z-20 pointer-events-none flex items-center justify-center hidden">
-                            <span class="text-8xl filter drop-shadow-lg">🌟</span>
+                            <span class="text-7xl lg:text-9xl filter drop-shadow-lg">🌟</span>
                         </div>
                     </div>
 
-                    <div class="mt-6 flex justify-center gap-4 w-full">
-                        <button onclick="playAnimation()" class="px-6 py-3 md:px-6 md:py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-full shadow-md transition-transform active:scale-95 font-bold text-xl flex items-center gap-2 focus:outline-none">
+                    <div class="mt-5 lg:mt-8 flex justify-center gap-3 lg:gap-5 w-full">
+                        <button onclick="playAnimation()" class="px-5 py-3 lg:px-8 lg:py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-full shadow-md transition-transform active:scale-95 font-bold text-lg lg:text-2xl flex items-center gap-1 lg:gap-2 focus:outline-none">
                             ▶️ 播放
                         </button>
-                        <button onclick="startQuiz()" class="px-6 py-3 md:px-6 md:py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-full shadow-md transition-transform active:scale-95 font-bold text-xl flex items-center gap-2 relative overflow-hidden group focus:outline-none">
-                            <span class="relative z-10 flex items-center">✍️ 自己寫 <span class="ml-2 text-sm bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded-full font-extrabold border border-yellow-500 shadow-sm leading-none">⭐ 2分</span></span>
+                        <button onclick="startQuiz()" class="px-5 py-3 lg:px-8 lg:py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-full shadow-md transition-transform active:scale-95 font-bold text-lg lg:text-2xl flex items-center gap-1 lg:gap-2 relative overflow-hidden group focus:outline-none whitespace-nowrap">
+                            <span class="relative z-10 flex items-center">✍️ 自己寫 <span class="ml-1 lg:ml-3 text-xs lg:text-base bg-yellow-400 text-yellow-900 px-2 py-0.5 lg:py-1 rounded-full font-extrabold border border-yellow-500 shadow-sm leading-none">⭐ 2分</span></span>
                         </button>
                     </div>
                 </div>
 
-                <div class="flex-1 w-full flex flex-col" id="right-info-panel">
-                    <div class="flex items-center gap-3 border-b-4 border-amber-200 pb-3 mb-5">
-                        <span class="text-4xl">🕵️</span>
-                        <h2 class="text-3xl font-bold text-amber-900 tracking-wide">字形密碼戰</h2>
-                    </div>
-                    
-                    <div class="bg-[#fffdf7] rounded-2xl p-6 md:p-8 border-2 border-amber-100 shadow-sm flex-1 flex flex-col gap-6 relative transition-colors">
+                <div class="flex-1 w-full flex flex-col justify-between" id="right-info-panel">
+                    <div>
+                        <div class="flex items-center gap-2 md:gap-3 border-b-4 border-amber-200 pb-2 md:pb-4 mb-4 md:mb-6">
+                            <span class="text-3xl lg:text-5xl">🕵️</span>
+                            <h2 class="text-2xl lg:text-4xl font-bold text-amber-900 tracking-wide">字形密碼戰</h2>
+                        </div>
                         
-                        <div class="flex items-center justify-between bg-white px-5 py-3 rounded-xl border border-gray-200 shadow-inner">
-                            <span class="text-gray-600 font-bold text-2xl">目標字：</span>
-                            <span id="info-char" class="font-bold text-6xl kaishu text-amber-700 bg-amber-50 px-6 py-2 rounded-xl shadow-sm border border-amber-200 inline-block transition-all hover:scale-105 cursor-pointer" onclick="playSound('pop')"></span>
-                        </div>
-
-                        <div class="flex flex-col items-start gap-3 w-full">
-                            <span class="text-gray-600 font-bold text-xl pt-2">1. 找部首：</span>
-                            <span id="game-status" class="text-base md:text-lg font-bold text-amber-600 bg-amber-100 px-4 py-2 rounded-full transition-colors duration-300 w-full text-center">選出對的部首解開防錯密碼！</span>
-                            <div id="radical-options" class="flex gap-4 flex-wrap justify-center w-full mt-2">
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col items-start w-full transition-all duration-700 ease-in-out mt-4" id="components-section" style="opacity: 0.3; filter: grayscale(100%); pointer-events: none;">
-                            <span class="text-gray-600 font-bold text-xl pt-2 mb-3">2. 拆字與防錯密碼：</span>
+                        <div class="bg-[#fffdf7] rounded-xl lg:rounded-3xl p-4 sm:p-5 lg:p-8 border-2 border-amber-100 shadow-sm flex flex-col gap-4 lg:gap-6 relative transition-colors">
                             
-                            <div class="w-full bg-white border-2 border-teal-200 rounded-2xl p-5 shadow-sm">
-                                <div id="info-components" class="flex flex-wrap justify-center items-center gap-3 transition-all duration-300 mb-4 pb-4 border-b-2 border-dashed border-gray-200">
-                                    <span class="text-3xl text-gray-400 kaishu font-bold">???</span>
+                            <div class="flex items-center justify-between bg-white px-3 lg:px-6 py-2 lg:py-4 rounded-xl border border-gray-200 shadow-inner">
+                                <span class="text-gray-600 font-bold text-lg lg:text-2xl">目標字：</span>
+                                <span id="info-char" class="font-bold text-4xl lg:text-7xl kaishu text-amber-700 bg-amber-50 px-4 lg:px-8 py-1 lg:py-2 rounded-lg lg:rounded-2xl shadow-sm border border-amber-200 inline-block transition-all hover:scale-105 cursor-pointer" onclick="playSound('pop')"></span>
+                            </div>
+
+                            <div class="flex flex-col items-center gap-2 lg:gap-4 w-full">
+                                <span class="text-gray-600 font-bold text-lg lg:text-2xl self-start pt-1 lg:pt-2">1. 找部首：</span>
+                                <span id="game-status" class="text-sm lg:text-xl font-bold text-amber-600 bg-amber-100 px-3 lg:px-6 py-1.5 lg:py-3 rounded-full transition-colors duration-300 w-full text-center max-w-xl">選出對的部首解開防錯密碼！</span>
+                                <div id="radical-options" class="flex gap-3 lg:gap-6 flex-wrap justify-center w-full mt-1 lg:mt-3">
                                 </div>
+                            </div>
+
+                            <div class="flex flex-col items-center w-full transition-all duration-700 ease-in-out mt-2 lg:mt-5" id="components-section" style="opacity: 0.3; filter: grayscale(100%); pointer-events: none;">
+                                <span class="text-gray-600 font-bold text-lg lg:text-2xl self-start pt-1 lg:pt-2 mb-2 lg:mb-4">2. 拆字與防錯密碼：</span>
                                 
-                                <div id="char-hint-box" class="hidden">
-                                    <div class="flex items-start gap-3 bg-red-50 p-4 rounded-xl border border-red-200">
-                                        <span class="text-3xl mt-1">🚨</span>
-                                        <div>
-                                            <span class="text-lg font-bold text-red-800 block mb-1">防錯密碼口訣</span>
-                                            <p id="char-hint-text" class="text-lg text-gray-800 font-medium leading-relaxed tracking-wide"></p>
+                                <div class="w-full max-w-2xl bg-white border-2 border-teal-200 rounded-xl lg:rounded-3xl p-4 lg:p-6 shadow-sm">
+                                    <div id="info-components" class="flex flex-wrap justify-center items-center gap-2 lg:gap-4 transition-all duration-300 mb-3 lg:mb-5 pb-3 lg:pb-5 border-b-2 border-dashed border-gray-200">
+                                        <span class="text-2xl lg:text-4xl text-gray-400 kaishu font-bold">???</span>
+                                    </div>
+                                    
+                                    <div id="char-hint-box" class="hidden">
+                                        <div class="flex items-start gap-2 lg:gap-4 bg-red-50 p-3 lg:p-5 rounded-lg lg:rounded-2xl border border-red-200">
+                                            <span class="text-2xl lg:text-4xl mt-0.5 lg:mt-1">🚨</span>
+                                            <div>
+                                                <span class="text-base lg:text-xl font-bold text-red-800 block mb-1 lg:mb-2">防錯密碼口訣</span>
+                                                <p id="char-hint-text" class="text-base lg:text-xl text-gray-800 font-medium leading-relaxed tracking-wide"></p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
                     
-                    <div class="mt-5 bg-blue-50 border-l-8 border-blue-400 p-5 rounded-xl shadow-sm transition-all duration-300">
-                        <div id="quiz-message" class="text-blue-800 font-bold text-xl flex items-center gap-3 transition-all">
+                    <div class="mt-4 lg:mt-6 bg-blue-50 border-l-8 border-blue-400 p-4 lg:p-6 rounded-lg lg:rounded-2xl shadow-sm transition-all duration-300 max-w-3xl mx-auto w-full">
+                        <div id="quiz-message" class="text-blue-800 font-bold text-base lg:text-xl flex items-center gap-2 lg:gap-3 transition-all justify-center">
                             <span>💡</span> 點擊左邊「▶️ 播放」看筆順，或「✍️ 自己寫」拿星星！
                         </div>
                     </div>
@@ -298,19 +294,35 @@
             </div>
 
             <!-- 第二區：詞語應用 -->
-            <div class="w-full max-w-5xl flex flex-col gap-4">
-                <div class="flex items-center gap-3 mb-2 px-2 border-b-4 border-amber-700 pb-2 inline-flex self-start">
-                    <span class="text-4xl">📖</span>
-                    <h2 class="text-3xl font-bold text-amber-900 tracking-wide">詞語全貌與應用</h2>
+            <div class="w-full flex flex-col gap-4">
+                <div class="flex items-center gap-2 md:gap-4 mb-1 md:mb-4 px-1 md:px-2 border-b-4 border-amber-700 pb-2 inline-flex self-start">
+                    <span class="text-3xl md:text-5xl">📖</span>
+                    <h2 class="text-2xl md:text-4xl font-bold text-amber-900 tracking-wide">詞語全貌與應用</h2>
                 </div>
                 
-                <div id="word-explanation" class="px-6 py-6 md:px-8 bg-[#fdf8ed] border-2 border-amber-200 rounded-3xl shadow-sm w-full transition-all hover:shadow-md mt-2">
+                <div id="word-explanation" class="px-5 py-5 md:px-10 md:py-8 bg-[#fdf8ed] border-2 border-amber-200 rounded-2xl md:rounded-3xl shadow-sm w-full max-w-4xl mx-auto transition-all hover:shadow-md mt-1 md:mt-2">
                 </div>
 
-                <div id="word-advanced-usage" class="w-full bg-blue-50 border-2 border-blue-200 rounded-3xl p-5 md:p-8 shadow-sm hidden fade-in-up mt-2 transition-colors">
+                <div id="word-advanced-usage" class="w-full bg-blue-50 border-2 border-blue-200 rounded-2xl md:rounded-3xl p-4 md:p-10 shadow-sm hidden fade-in-up mt-1 md:mt-4 transition-colors">
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- 🏆 里程碑慶祝彈窗 (Milestone Modal) -->
+    <div id="milestone-modal" class="fixed inset-0 z-[100] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 bg-black/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-8 md:p-14 shadow-2xl flex flex-col items-center transform scale-90 transition-transform duration-300 text-center border-8 border-yellow-400 max-w-2xl w-11/12">
+            <span class="text-7xl md:text-9xl mb-4 animate-bounce filter drop-shadow-md">🏆</span>
+            <h2 class="text-3xl md:text-5xl font-black text-amber-600 mb-4 tracking-wide">太厲害了！</h2>
+            <p class="text-xl md:text-3xl font-bold text-gray-700 mb-8 leading-relaxed">
+                你已經成功收集了 <span id="milestone-score-text" class="text-red-500 text-4xl md:text-6xl mx-2 font-black">50</span> 顆星星！<br>
+                <span id="milestone-subtext" class="text-lg md:text-2xl text-gray-500 mt-2 block">繼續解鎖下一個成就吧！</span>
+            </p>
+            <button onclick="closeMilestone()" class="bg-gradient-to-b from-yellow-400 to-yellow-600 text-white font-bold text-xl md:text-2xl px-10 py-4 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all w-full md:w-auto">
+                繼續闖關 🚀
+            </button>
+            <div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl"></div>
         </div>
     </div>
 
@@ -327,14 +339,17 @@
         let currentMistakes = 0;
         let usedHint = false;
         let currentFilter = 'all';
-
-        const MAX_SCORE = 134; 
-        const completedTasks = new Set();
-        
-        // 🌟 新增：連擊計數器
         let currentCombo = 0;
 
-        // --- 感官友善模式切換 (Sensory-Friendly Focus Mode) ---
+        // 🌟 里程碑設定 (總分134)
+        const MAX_SCORE = 134; 
+        const MILESTONES = [50, 100, 134];
+        const reachedMilestones = new Set();
+        const completedTasks = new Set();
+        
+        // ⚡ 預載快取字典
+        const charDataCache = {};
+
         window.toggleFocusMode = function(e) {
             e.stopPropagation();
             focusMode = !focusMode;
@@ -352,12 +367,10 @@
                 btn.classList.remove('bg-white/80', 'text-amber-900', 'shadow-sm');
                 btn.classList.add('bg-white/20', 'text-white');
             }
-            
             btn.classList.add('pop');
             setTimeout(() => btn.classList.remove('pop'), 300);
         };
 
-        // --- 音效系統 ---
         window.initAudio = function() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -417,6 +430,14 @@
                 gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'milestone') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.2);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.4);
+                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.8);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.8);
             }
         }
 
@@ -432,11 +453,12 @@
             }, 2000);
         }
 
-        // 🌟 新增：更新視覺進度條與連擊系統邏輯
-        function updateProgress() {
+        // 🌟 修正 ReferenceError：確保 updateProgress 在全域可見
+        window.updateProgress = function() {
             const progress = (globalScore / MAX_SCORE) * 100;
-            document.getElementById('score-progress-bar').style.width = progress + '%';
-        }
+            const bar = document.getElementById('score-progress-bar');
+            if (bar) bar.style.width = progress + '%';
+        };
 
         window.updateCombo = function(isCorrect) {
             const badge = document.getElementById('combo-badge');
@@ -450,7 +472,6 @@
                     void badge.offsetWidth; 
                     badge.classList.add('pop');
                     
-                    // 每逢 3 連擊，額外觸發一次強力讚美
                     if (currentCombo % 3 === 0) {
                         showCheer();
                     }
@@ -461,7 +482,6 @@
             }
         };
 
-        // 🌟 字詞與難度設定 (1: 初階, 2: 中階, 3: 挑戰)
         const wordDataList = [
             { word: "建築", level: 1 }, { word: "筆直", level: 1 }, { word: "寬廣", level: 1 },
             { word: "彎彎", level: 1 }, { word: "圍繞", level: 1 }, { word: "湛藍", level: 1 },
@@ -471,7 +491,6 @@
             { word: "彩畫絢麗", level: 3 }, { word: "玲瓏奇巧", level: 3 }, { word: "宏大壯麗", level: 3 }
         ];
 
-        // 情境引入字典
         const wordIntros = {
             "玲瓏": { icon: "💎", anim: "anim-pulse", ctx: "在香港藝術館裡，展示著一件雕工十分細緻、閃閃發光的玉器。", q: "你會怎麼形容這個精緻的藝術品？" },
             "建築": { icon: "🏗️", anim: "anim-float", ctx: "在香港的街道上，搭棚師傅熟練地架起竹棚，讓工人們一層層把高樓大廈建起來。", q: "他們正在進行什麼工程？" },
@@ -492,22 +511,22 @@
         };
 
         const wordExplanations = {
-            "玲瓏": { text: "精巧細緻的樣子。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>exquisite (adj.)</span>", icon: "💎" },
-            "建築": { text: "建造房屋或指建築物本身。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>building (n.)</span>", icon: "🏛️" },
-            "輝煌": { text: "光輝燦爛，非常傑出。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>glorious (adj.)</span>", icon: "✨" },
-            "彩畫絢麗": { text: "彩色圖畫鮮明耀眼。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>beautiful (adj.)</span>", icon: "🎨" },
-            "玲瓏奇巧": { text: "小巧精緻、奇特巧妙。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>exquisite (adj.)</span>", icon: "🧩" },
-            "宏大壯麗": { text: "規模巨大，氣勢雄偉美麗。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>magnificent (adj.)</span>", icon: "🏰" },
-            "筆直": { text: "像筆桿一樣，非常直。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>straight (adj.)</span>", icon: "📏" },
-            "寬廣": { text: "面積很大、很寬闊。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>spacious (adj.)</span>", icon: "🏞️" },
-            "彎彎": { text: "彎曲的樣子。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>curved (adj.)</span>", icon: "🌙" },
-            "矗立": { text: "高聳地直立著。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>standing (n.)</span>", icon: "🗼" },
-            "繚繞": { text: "盤旋、圍繞。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>curl up (v.)</span>", icon: "🌫️" },
-            "圍繞": { text: "包圍、環繞在四周。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>surround (v.)</span>", icon: "🔄" },
-            "湛藍": { text: "非常深的藍色。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>deep blue (adj.)</span>", icon: "🌊" },
-            "襯映": { text: "互相襯托，相映成趣。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>contrast (v.)</span>", icon: "🌄" },
-            "色彩鮮明": { text: "顏色鮮亮耀眼。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>colorful (adj.)</span>", icon: "🌈" },
-            "儀仗": { text: "儀式上的護衛隊伍或武器。<br/><span class='text-amber-700 text-xl font-bold mt-1 block'>ceremony weapory (n.)</span>", icon: "💂" }
+            "玲瓏": { text: "精巧細緻的樣子。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>exquisite (adj.)</span>", icon: "💎" },
+            "建築": { text: "建造房屋或指建築物本身。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>building (n.)</span>", icon: "🏛️" },
+            "輝煌": { text: "光輝燦爛，非常傑出。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>glorious (adj.)</span>", icon: "✨" },
+            "彩畫絢麗": { text: "彩色圖畫鮮明耀眼。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>beautiful (adj.)</span>", icon: "🎨" },
+            "玲瓏奇巧": { text: "小巧精緻、奇特巧妙。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>exquisite (adj.)</span>", icon: "🧩" },
+            "宏大壯麗": { text: "規模巨大，氣勢雄偉美麗。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>magnificent (adj.)</span>", icon: "🏰" },
+            "筆直": { text: "像筆桿一樣，非常直。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>straight (adj.)</span>", icon: "📏" },
+            "寬廣": { text: "面積很大、很寬闊。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>spacious (adj.)</span>", icon: "🏞️" },
+            "彎彎": { text: "彎曲的樣子。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>curved (adj.)</span>", icon: "🌙" },
+            "矗立": { text: "高聳地直立著。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>standing (n.)</span>", icon: "🗼" },
+            "繚繞": { text: "盤旋、圍繞。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>curl up (v.)</span>", icon: "🌫️" },
+            "圍繞": { text: "包圍、環繞在四周。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>surround (v.)</span>", icon: "🔄" },
+            "湛藍": { text: "非常深的藍色。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>deep blue (adj.)</span>", icon: "🌊" },
+            "襯映": { text: "互相襯托，相映成趣。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>contrast (v.)</span>", icon: "🌄" },
+            "色彩鮮明": { text: "顏色鮮亮耀眼。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>colorful (adj.)</span>", icon: "🌈" },
+            "儀仗": { text: "儀式上的護衛隊伍或武器。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>ceremony weapory (n.)</span>", icon: "💂" }
         };
 
         const wordAdvanced = {
@@ -688,20 +707,26 @@
             "門", "隶", "八", "艮", "阜", "鬥", "髟", "舟", "丿", "寸", "臼", "玉", "廴", "彡", "鹿", "士", "弓", "立", "囗", "色"
         ];
 
-        // 🌟 新增：提取 Emoji 函數 (解決 extractEmoji 錯誤)
-        function extractEmoji(str) {
-            const regex = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E0}-\u{1F1FF}\u{1F200}-\u{1F2FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/u;
-            const match = str.match(regex);
-            return match ? match[0] : '';
-        }
+        window.preloadCharacterData = function(word) {
+            [...word].forEach(char => {
+                if (!charDataCache[char]) {
+                    fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data-tc@1.0.1/${char}.json`)
+                        .then(res => res.ok ? res.json() : fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`).then(r => r.json()))
+                        .then(data => { charDataCache[char] = data; })
+                        .catch(e => console.log('Preload skipped for', char));
+                }
+            });
+        };
 
-        // 🌟 新增：視覺化情境引入函數 (解決 showVisualIntro 錯誤)
         window.showVisualIntro = function(word) {
             currentWord = word;
+            
+            preloadCharacterData(word);
+            
             const intro = wordIntros[word] || { icon: "❓", anim: "anim-pulse", ctx: "這是一個神祕的詞彙。", q: "你猜猜是什麼意思？" };
             
             document.getElementById('intro-visual').textContent = intro.icon;
-            document.getElementById('intro-visual').className = `text-8xl md:text-9xl my-8 filter drop-shadow-xl ${intro.anim}`;
+            document.getElementById('intro-visual').className = `text-7xl md:text-9xl my-8 md:my-10 filter drop-shadow-xl ${intro.anim}`;
             document.getElementById('intro-context').textContent = intro.ctx;
             document.getElementById('intro-question').textContent = "💬 " + intro.q;
             
@@ -714,7 +739,6 @@
             introSect.classList.add('fade-in-up');
         };
 
-        // --- 初始化與篩選器邏輯 ---
         window.filterDifficulty = function(level, btn) {
             currentFilter = level;
             document.querySelectorAll('.diff-btn').forEach(b => {
@@ -769,7 +793,6 @@
             renderWordList();
         }
 
-        // --- 答題與動態難度調節 ---
         window.checkSentence = function(btn, option, answer, feedbackText) {
             if (btn.disabled) return;
             const container = document.getElementById('sentence-options');
@@ -778,8 +801,7 @@
 
             if (option === answer) {
                 playSound('correct');
-                updateCombo(true); // 🌟 記錄連擊
-                
+                updateCombo(true);
                 if (!completedTasks.has(`sentence_${currentWord}`)) {
                     completedTasks.add(`sentence_${currentWord}`);
                     addScore(1);
@@ -790,25 +812,24 @@
 
                 showCheer();
                 if(iconSpan) iconSpan.textContent = '✅';
-                btn.className = "w-full text-left px-5 py-4 bg-emerald-500 text-white font-bold rounded-xl shadow-md text-lg md:text-xl pop transition-all border-2 border-emerald-600 flex items-center gap-3";
-                feedback.className = "mt-5 text-xl md:text-2xl font-bold p-4 rounded-xl border-2 border-emerald-300 bg-emerald-100 text-emerald-900 pop transition-all block shadow-sm";
+                btn.className = "w-full text-left px-4 py-3 md:px-6 md:py-5 bg-emerald-500 text-white font-bold rounded-xl shadow-md text-lg md:text-2xl pop transition-all border-2 border-emerald-600 flex items-center gap-2 md:gap-4";
+                feedback.className = "mt-4 md:mt-5 text-lg md:text-2xl font-bold p-4 md:p-5 rounded-xl border-2 border-emerald-300 bg-emerald-100 text-emerald-900 pop transition-all block shadow-sm";
 
                 Array.from(container.children).forEach(child => {
                     child.disabled = true;
                     if(child !== btn) {
-                        child.className = "w-full text-left px-5 py-4 bg-gray-200 text-gray-400 font-bold rounded-xl text-lg md:text-xl transition-all opacity-50 cursor-not-allowed flex items-center gap-3";
+                        child.className = "w-full text-left px-4 py-3 md:px-6 md:py-5 bg-gray-200 text-gray-400 font-bold rounded-xl text-lg md:text-2xl transition-all opacity-50 cursor-not-allowed flex items-center gap-2 md:gap-4";
                     }
                 });
             } else {
                 playSound('wrong');
-                updateCombo(false); // 🌟 答錯中斷連擊
+                updateCombo(false);
                 if(iconSpan) iconSpan.textContent = '❌';
-                btn.className = "w-full text-left px-5 py-4 bg-gray-200 text-gray-400 font-bold rounded-xl text-lg md:text-xl shake transition-all opacity-50 cursor-not-allowed flex items-center gap-3";
+                btn.className = "w-full text-left px-4 py-3 md:px-6 md:py-5 bg-gray-200 text-gray-400 font-bold rounded-xl text-lg md:text-2xl shake transition-all opacity-50 cursor-not-allowed flex items-center gap-2 md:gap-4";
                 btn.disabled = true;
                 
                 sentenceAttemptCount++;
                 
-                // 🌟 ZPD 動態難度調節
                 if (sentenceAttemptCount === 1) {
                     let hiddenOne = false;
                     Array.from(container.children).forEach(child => {
@@ -824,10 +845,10 @@
                         }
                     });
                     feedback.innerHTML = `🤔 不太對喔，我幫你刪掉一個錯誤選項，再看清楚提示試試看！`;
-                    feedback.className = "mt-5 text-xl font-bold p-4 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-800 transition-all block shadow-sm pop";
+                    feedback.className = "mt-4 md:mt-5 text-lg md:text-xl font-bold p-4 md:p-5 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-800 transition-all block shadow-sm pop";
                 } else {
                     feedback.innerHTML = `🤔 還是不對喔，答案就在剩下的選項裡！`;
-                    feedback.className = "mt-5 text-xl font-bold p-4 rounded-xl border-2 border-red-300 bg-red-50 text-red-800 transition-all block";
+                    feedback.className = "mt-4 md:mt-5 text-lg md:text-xl font-bold p-4 md:p-5 rounded-xl border-2 border-red-300 bg-red-50 text-red-800 transition-all block";
                 }
             }
         };
@@ -839,7 +860,7 @@
 
             if (option === answer) {
                 playSound('correct');
-                updateCombo(true); // 🌟 記錄連擊
+                updateCombo(true);
                 if (!completedTasks.has(`semantic_${currentWord}`)) {
                     completedTasks.add(`semantic_${currentWord}`);
                     addScore(1);
@@ -848,21 +869,21 @@
                     feedback.innerHTML = `✨ ${feedbackText}`;
                 }
                 showCheer();
-                btn.className = "px-6 py-3 bg-indigo-500 text-white font-bold rounded-xl shadow-md text-xl pop transition-all border-2 border-indigo-600";
-                feedback.className = "mt-5 text-xl md:text-2xl font-bold p-4 rounded-xl border-2 border-indigo-300 bg-indigo-100 text-indigo-900 pop transition-all block shadow-sm";
+                btn.className = "px-5 py-3 md:px-8 md:py-4 bg-indigo-500 text-white font-bold rounded-xl shadow-md text-lg md:text-2xl pop transition-all border-2 border-indigo-600";
+                feedback.className = "mt-4 md:mt-5 text-lg md:text-2xl font-bold p-4 md:p-5 rounded-xl border-2 border-indigo-300 bg-indigo-100 text-indigo-900 pop transition-all block shadow-sm";
                 Array.from(container.children).forEach(child => {
                     child.disabled = true;
                     if(child !== btn) {
-                        child.className = "px-6 py-3 bg-gray-200 text-gray-400 font-bold rounded-xl text-xl transition-all opacity-50 cursor-not-allowed";
+                        child.className = "px-5 py-3 md:px-8 md:py-4 bg-gray-200 text-gray-400 font-bold rounded-xl text-lg md:text-2xl transition-all opacity-50 cursor-not-allowed";
                     }
                 });
             } else {
                 playSound('wrong');
-                updateCombo(false); // 🌟 答錯中斷連擊
-                btn.className = "px-6 py-3 bg-gray-200 text-gray-400 font-bold rounded-xl text-xl shake transition-all opacity-50 cursor-not-allowed";
+                updateCombo(false);
+                btn.className = "px-5 py-3 md:px-8 md:py-4 bg-gray-200 text-gray-400 font-bold rounded-xl text-lg md:text-2xl shake transition-all opacity-50 cursor-not-allowed";
                 btn.disabled = true;
                 feedback.innerHTML = `🤔 不太對喔，再想想看！`;
-                feedback.className = "mt-5 text-xl font-bold p-4 rounded-xl border-2 border-red-300 bg-red-50 text-red-800 transition-all block";
+                feedback.className = "mt-4 md:mt-5 text-lg md:text-xl font-bold p-4 md:p-5 rounded-xl border-2 border-red-300 bg-red-50 text-red-800 transition-all block";
             }
         };
 
@@ -882,86 +903,32 @@
         function renderAdvancedUsage(word) {
             const advContainer = document.getElementById('word-advanced-usage');
             const data = wordAdvanced[word];
-            sentenceAttemptCount = 0; // 重置答題次數
+            sentenceAttemptCount = 0; 
             
             if (!data) {
                 advContainer.classList.add('hidden');
                 return;
             }
-            
-            let legoHtml = '';
-            if (data.lego && data.lego.length > 0) {
-                const blocks = data.lego.map(l => {
-                    if (l.c4) {
-                        return `
-                        <div class="flex items-center gap-1 bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-200 text-lg">
-                            <span class="${l.c1Bg} lego-block text-white font-bold px-3 py-1">${l.c1}</span>
-                            <span class="${l.c2Bg} lego-block text-white font-bold px-3 py-1">${l.c2}</span>
-                            <span class="${l.c3Bg} lego-block text-white font-bold px-3 py-1">${l.c3}</span>
-                            <span class="${l.c4Bg} lego-block text-white font-bold px-3 py-1">${l.c4}</span>
-                            <span class="text-gray-400 mx-2 text-2xl">👉</span>
-                            <span class="font-bold text-gray-800 text-xl">${l.res}</span>
-                        </div>`;
-                    }
-                    return `
-                    <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-200 text-lg">
-                        <span class="${l.c1Bg} lego-block text-white font-bold px-3 py-1">${l.c1}</span>
-                        <span class="text-gray-400 font-bold text-xl">+</span>
-                        <span class="${l.c2Bg} lego-block text-white font-bold px-3 py-1">${l.c2}</span>
-                        <span class="text-gray-400 font-bold text-xl">=</span>
-                        <span class="font-bold text-gray-800 text-xl">${l.res}</span>
-                    </div>`;
-                }).join('');
-                
-                legoHtml = `
-                    <div class="mb-6">
-                        <div class="text-xl md:text-2xl font-bold text-blue-800 mb-3 border-l-4 border-blue-500 pl-3">🧩 把字當積木拼 (解鎖新詞語)</div>
-                        <div class="flex flex-wrap gap-4">${blocks}</div>
-                    </div>`;
-            }
-
-            const formulaHtml = `
-                <div class="bg-white rounded-2xl p-5 md:p-6 border border-blue-100 shadow-sm mb-5">
-                    <div class="text-xl md:text-2xl font-bold text-blue-800 mb-3 flex items-center gap-2"><span>🧮</span> 百搭公式 (不會用錯)</div>
-                    <div class="font-bold text-teal-900 bg-teal-50 inline-block px-5 py-3 rounded-xl mb-4 text-xl md:text-2xl border border-teal-200 shadow-sm w-full md:w-auto">
-                        ${data.formula}
-                    </div>
-                    <div class="text-lg md:text-xl text-gray-700 bg-gray-50 px-4 py-3 rounded-xl border border-gray-200">
-                        ✅ 例：<span class="font-bold text-gray-900">${data.examples}</span>
-                    </div>
-                </div>`;
-
-            const wrongHtml = `
-                <div class="bg-red-50 rounded-2xl p-5 md:p-6 border border-red-200 shadow-sm mb-5">
-                    <div class="text-xl md:text-2xl font-bold text-red-800 mb-3 flex items-center gap-2"><span>💥</span> 地雷區 (是非題)</div>
-                    <div class="flex items-start gap-4 bg-white p-4 rounded-xl border border-red-100 shadow-sm">
-                        <span class="text-3xl mt-1">❌</span>
-                        <div>
-                            <span class="font-bold text-gray-900 text-xl md:text-2xl line-through decoration-red-500 decoration-[3px]">${data.wrong.text}</span>
-                            <p class="text-base md:text-lg text-gray-700 mt-2 font-medium bg-red-50 p-3 rounded-lg border border-red-100">⚠️ 點解錯：${data.wrong.reason}</p>
-                        </div>
-                    </div>
-                </div>`;
 
             let gameHtml = '';
             if (data.game) {
                 const isSynonym = data.game.type === 'synonym';
-                const badge = isSynonym ? '<span class="bg-indigo-100 text-indigo-800 border border-indigo-300 px-2 py-1 rounded-lg shadow-sm text-lg">🤝 找好朋友 (近義詞)</span>' : '<span class="bg-purple-100 text-purple-800 border border-purple-300 px-2 py-1 rounded-lg shadow-sm text-lg">⚔️ 找敵人 (反義詞)</span>';
+                const badge = isSynonym ? '<span class="bg-indigo-100 text-indigo-800 border border-indigo-300 px-3 py-1 rounded-lg shadow-sm text-sm md:text-xl">🤝 找好朋友 (近義詞)</span>' : '<span class="bg-purple-100 text-purple-800 border border-purple-300 px-3 py-1 rounded-lg shadow-sm text-sm md:text-xl">⚔️ 找敵人 (反義詞)</span>';
                 
                 const buttonsHtml = data.game.opts.map(opt => {
                     const safeOpt = opt.replace(/'/g, "\\'");
                     const safeAns = data.game.ans.replace(/'/g, "\\'");
                     const safeExp = data.game.exp.replace(/'/g, "\\'");
-                    return `<button onclick="checkSemantic(this, '${safeOpt}', '${safeAns}', '${safeExp}')" class="px-6 py-3 bg-white border-2 border-indigo-200 text-indigo-700 font-bold rounded-xl text-xl shadow-sm hover:bg-indigo-50 hover:-translate-y-1 transition-all focus:outline-none">${opt}</button>`;
+                    return `<button onclick="checkSemantic(this, '${safeOpt}', '${safeAns}', '${safeExp}')" class="px-5 py-3 md:px-8 md:py-4 bg-white border-2 border-indigo-200 text-indigo-700 font-bold rounded-xl text-lg md:text-2xl shadow-sm hover:bg-indigo-50 hover:-translate-y-1 transition-all focus:outline-none">${opt}</button>`;
                 }).join('');
 
                 gameHtml = `
-                    <div class="bg-indigo-50/50 rounded-2xl p-5 md:p-6 border-2 border-indigo-200 shadow-sm mt-5">
-                        <div class="text-xl md:text-2xl font-bold text-indigo-900 mb-4 flex items-center gap-3">
+                    <div class="bg-indigo-50/50 rounded-2xl p-5 md:p-8 border-2 border-indigo-200 shadow-sm mt-2 md:mt-4 max-w-4xl mx-auto w-full">
+                        <div class="text-xl md:text-3xl font-bold text-indigo-900 mb-4 md:mb-6 flex items-center gap-3 md:gap-4">
                             <span>🎯</span> 語義小挑戰 ${badge}
                         </div>
-                        <div class="text-xl md:text-2xl font-bold text-gray-800 mb-5 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">${data.game.q}</div>
-                        <div class="flex flex-wrap gap-4" id="semantic-options">
+                        <div class="text-xl md:text-3xl font-bold text-gray-800 mb-5 md:mb-6 bg-white p-4 md:p-6 rounded-xl border border-gray-200 shadow-sm">${data.game.q}</div>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-3 md:gap-6" id="semantic-options">
                             ${buttonsHtml}
                         </div>
                         <div id="semantic-feedback" class="hidden"></div>
@@ -975,7 +942,6 @@
                     const safeAns = data.sentenceGame.ans.replace(/'/g, "\\'");
                     const safeExp = data.sentenceGame.exp.replace(/'/g, "\\'");
                     
-                    // 安全提取 Emoji
                     const lastSpaceIdx = opt.lastIndexOf(' ');
                     let textPart = opt;
                     let emojiPart = '';
@@ -984,27 +950,103 @@
                         emojiPart = opt.substring(lastSpaceIdx + 1);
                     }
 
-                    return `<button data-opt="${safeOpt}" onclick="checkSentence(this, '${safeOpt}', '${safeAns}', '${safeExp}')" class="w-full text-left px-5 py-4 bg-white border-2 border-emerald-200 text-emerald-800 font-bold rounded-xl text-lg md:text-xl shadow-sm hover:bg-emerald-50 hover:-translate-y-1 transition-all focus:outline-none flex items-center gap-3">
-                        <span class="text-2xl icon-span pointer-events-none">⚪</span> 
+                    return `<button data-opt="${safeOpt}" onclick="checkSentence(this, '${safeOpt}', '${safeAns}', '${safeExp}')" class="w-full text-left px-4 py-3 md:px-6 md:py-5 bg-white border-2 border-emerald-200 text-emerald-800 font-bold rounded-xl text-lg md:text-2xl shadow-sm hover:bg-emerald-50 hover:-translate-y-1 transition-all focus:outline-none flex items-center gap-2 md:gap-4">
+                        <span class="text-2xl md:text-3xl icon-span pointer-events-none">⚪</span> 
                         <span class="flex-1 pointer-events-none">${textPart}</span>
-                        <span class="text-3xl sentence-emoji pointer-events-none transition-all ml-2">${emojiPart}</span>
+                        <span class="text-3xl md:text-4xl sentence-emoji pointer-events-none transition-all ml-1 md:ml-3">${emojiPart}</span>
                     </button>`;
                 }).join('');
 
                 sentenceHtml = `
-                    <div class="bg-emerald-50/50 rounded-2xl p-5 md:p-6 border-2 border-emerald-200 shadow-sm mt-5">
-                        <div class="text-xl md:text-2xl font-bold text-emerald-900 mb-4 flex items-center gap-3">
+                    <div class="bg-emerald-50/50 rounded-2xl p-5 md:p-8 border-2 border-emerald-200 shadow-sm mt-5 md:mt-8 mb-6 md:mb-10 max-w-4xl mx-auto w-full">
+                        <div class="text-xl md:text-3xl font-bold text-emerald-900 mb-4 md:mb-6 flex items-center gap-3 md:gap-4">
                             <span>📝</span> 觀察與應用 (情境選擇)
                         </div>
-                        <div class="text-xl md:text-2xl font-bold text-gray-800 mb-5 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">${data.sentenceGame.q}</div>
-                        <div class="flex flex-col gap-3" id="sentence-options">
+                        <div class="text-xl md:text-3xl font-bold text-gray-800 mb-5 md:mb-6 bg-white p-4 md:p-6 rounded-xl border border-gray-200 shadow-sm">${data.sentenceGame.q}</div>
+                        <div class="flex flex-col gap-3 md:gap-5" id="sentence-options">
                             ${buttonsHtml}
                         </div>
                         <div id="sentence-feedback" class="hidden"></div>
                     </div>`;
             }
 
-            advContainer.innerHTML = legoHtml + formulaHtml + wrongHtml + gameHtml + sentenceHtml;
+            let interactiveHeader = '';
+            if (gameHtml || sentenceHtml) {
+                interactiveHeader = `
+                    <div class="w-full flex items-center justify-center my-4 md:my-6">
+                        <span class="bg-yellow-100 text-yellow-800 px-6 py-3 md:px-10 md:py-4 rounded-full font-bold text-lg md:text-2xl border-2 border-yellow-400 shadow-md animate-pulse whitespace-nowrap">
+                            👇 請完成以下挑戰，賺取星星！⭐
+                        </span>
+                    </div>
+                `;
+            }
+
+            let legoHtml = '';
+            if (data.lego && data.lego.length > 0) {
+                const blocks = data.lego.map(l => {
+                    if (l.c4) {
+                        return `
+                        <div class="flex items-center gap-1 bg-white px-3 md:px-4 py-2 md:py-3 rounded-xl shadow-sm border border-gray-200 text-base md:text-xl">
+                            <span class="${l.c1Bg} lego-block text-white font-bold px-2 py-0.5 md:px-3 md:py-1">${l.c1}</span>
+                            <span class="${l.c2Bg} lego-block text-white font-bold px-2 py-0.5 md:px-3 md:py-1">${l.c2}</span>
+                            <span class="${l.c3Bg} lego-block text-white font-bold px-2 py-0.5 md:px-3 md:py-1">${l.c3}</span>
+                            <span class="${l.c4Bg} lego-block text-white font-bold px-2 py-0.5 md:px-3 md:py-1">${l.c4}</span>
+                            <span class="text-gray-400 mx-1 md:mx-3 text-xl md:text-3xl">👉</span>
+                            <span class="font-bold text-gray-800 text-lg md:text-2xl">${l.res}</span>
+                        </div>`;
+                    }
+                    return `
+                    <div class="flex items-center gap-1 md:gap-3 bg-white px-3 md:px-4 py-2 md:py-3 rounded-xl shadow-sm border border-gray-200 text-base md:text-xl">
+                        <span class="${l.c1Bg} lego-block text-white font-bold px-2 py-0.5 md:px-3 md:py-1">${l.c1}</span>
+                        <span class="text-gray-400 font-bold text-xl md:text-3xl">+</span>
+                        <span class="${l.c2Bg} lego-block text-white font-bold px-2 py-0.5 md:px-3 md:py-1">${l.c2}</span>
+                        <span class="text-gray-400 font-bold text-xl md:text-3xl">=</span>
+                        <span class="font-bold text-gray-800 text-lg md:text-2xl">${l.res}</span>
+                    </div>`;
+                }).join('');
+                
+                legoHtml = `
+                    <div class="mb-6 md:mb-8 max-w-4xl mx-auto w-full">
+                        <div class="text-xl md:text-3xl font-bold text-blue-800 mb-3 md:mb-5 border-l-4 border-blue-500 pl-3 md:pl-4">🧩 把字當積木拼 (解鎖新詞語)</div>
+                        <div class="flex flex-wrap gap-3 md:gap-5">${blocks}</div>
+                    </div>`;
+            }
+
+            const formulaHtml = `
+                <div class="bg-white rounded-xl md:rounded-2xl p-5 md:p-8 border border-blue-100 shadow-sm mb-5 md:mb-8 max-w-4xl mx-auto w-full">
+                    <div class="text-xl md:text-3xl font-bold text-blue-800 mb-3 md:mb-5 flex items-center gap-2 md:gap-3"><span>🧮</span> 百搭公式 (不會用錯)</div>
+                    <div class="font-bold text-teal-900 bg-teal-50 inline-block px-5 py-3 md:px-8 md:py-4 rounded-xl mb-4 md:mb-6 text-xl md:text-3xl border border-teal-200 shadow-sm w-full md:w-auto text-center md:text-left">
+                        ${data.formula}
+                    </div>
+                    <div class="text-lg md:text-2xl text-gray-700 bg-gray-50 px-4 py-3 md:px-6 md:py-4 rounded-xl border border-gray-200">
+                        ✅ 例：<span class="font-bold text-gray-900">${data.examples}</span>
+                    </div>
+                </div>`;
+
+            const wrongHtml = `
+                <div class="bg-red-50 rounded-xl md:rounded-2xl p-5 md:p-8 border border-red-200 shadow-sm mb-4 md:mb-6 max-w-4xl mx-auto w-full">
+                    <div class="text-xl md:text-3xl font-bold text-red-800 mb-3 md:mb-5 flex items-center gap-2 md:gap-3"><span>💥</span> 地雷區 (是非題)</div>
+                    <div class="flex items-start gap-3 md:gap-5 bg-white p-4 md:p-6 rounded-xl border border-red-100 shadow-sm">
+                        <span class="text-3xl md:text-4xl mt-1">❌</span>
+                        <div>
+                            <span class="font-bold text-gray-900 text-xl md:text-3xl line-through decoration-red-500 decoration-[3px]">${data.wrong.text}</span>
+                            <p class="text-base md:text-xl text-gray-700 mt-2 md:mt-3 font-medium bg-red-50 p-3 md:p-4 rounded-lg border border-red-100 leading-relaxed">⚠️ 點解錯：${data.wrong.reason}</p>
+                        </div>
+                    </div>
+                </div>`;
+
+            let passiveHeader = '';
+            if (legoHtml || formulaHtml || wrongHtml) {
+                 passiveHeader = `
+                    <div class="w-full flex items-center justify-center gap-3 md:gap-5 my-8 md:my-12 max-w-4xl mx-auto">
+                        <div class="h-px bg-blue-300 flex-1"></div>
+                        <span class="text-blue-900 font-black text-2xl md:text-4xl tracking-widest px-4">📚 詞語學習秘笈</span>
+                        <div class="h-px bg-blue-300 flex-1"></div>
+                    </div>
+                `;
+            }
+
+            advContainer.innerHTML = interactiveHeader + gameHtml + sentenceHtml + passiveHeader + legoHtml + formulaHtml + wrongHtml;
             advContainer.classList.remove('hidden');
         }
 
@@ -1016,10 +1058,10 @@
             const expData = wordExplanations[word] || { text: '暫無解釋', icon: '💡' };
             
             expBox.innerHTML = `
-                <div class="flex items-start md:items-center gap-5 justify-center md:justify-start">
-                    <div class="text-6xl filter drop-shadow-md transform hover:scale-110 transition-transform duration-300 cursor-default">${expData.icon}</div>
+                <div class="flex items-start md:items-center gap-4 md:gap-8 justify-center md:justify-start">
+                    <div class="text-6xl md:text-7xl filter drop-shadow-md transform hover:scale-110 transition-transform duration-300 cursor-default">${expData.icon}</div>
                     <div class="text-left flex-1">
-                        <span class="text-gray-800 text-2xl md:text-3xl font-bold tracking-wide leading-relaxed block">${expData.text}</span>
+                        <span class="text-gray-800 text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide leading-relaxed block">${expData.text}</span>
                     </div>
                 </div>
             `;
@@ -1038,9 +1080,7 @@
             });
 
             if (display.children.length > 0) {
-                setTimeout(() => {
-                    selectChar(word[0], display.children[0]);
-                }, 50);
+                selectChar(word[0], display.children[0]);
             }
         }
 
@@ -1078,7 +1118,10 @@
             document.getElementById('success-animation').classList.add('hidden');
             document.getElementById('success-animation').classList.remove('star-animate');
             
-            const canvasSize = window.innerWidth >= 768 ? 320 : 280;
+            let canvasSize = 260; 
+            if (window.innerWidth >= 1024) canvasSize = 350; 
+            else if (window.innerWidth >= 640) canvasSize = 320; 
+
             writer = HanziWriter.create('character-canvas', char, {
                 width: canvasSize,
                 height: canvasSize,
@@ -1086,17 +1129,21 @@
                 strokeAnimationSpeed: 1.5,
                 delayBetweenStrokes: 100,
                 showOutline: true,
-                strokeColor: '#b91c1c', // 保持主體為深紅色
-                radicalColor: '#14b8a6', // 🌟 升級：將部首改為明亮的 teal-500，強烈視覺對比
+                strokeColor: '#b91c1c', 
+                radicalColor: '#14b8a6', 
                 outlineColor: '#e5e7eb',
                 drawingWidth: 30,
                 charDataLoader: function(c, onComplete) {
-                    fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data-tc@1.0.1/${c}.json`)
-                        .then(res => res.ok ? res.json() : fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${c}.json`).then(r => r.json()))
-                        .then(data => onComplete(data))
-                        .catch(err => {
-                            canvas.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-red-500 font-bold bg-white/80 text-xl">暫無此字筆順資料</div>';
-                        });
+                    if (charDataCache[c]) {
+                        onComplete(charDataCache[c]);
+                    } else {
+                        fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data-tc@1.0.1/${c}.json`)
+                            .then(res => res.ok ? res.json() : fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${c}.json`).then(r => r.json()))
+                            .then(data => { charDataCache[c] = data; onComplete(data); })
+                            .catch(err => {
+                                canvas.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-red-500 font-bold bg-white/80 text-xl">暫無資料</div>';
+                            });
+                    }
                 }
             });
         }
@@ -1106,7 +1153,7 @@
             const statusText = document.getElementById('game-status');
             optionsContainer.innerHTML = '';
             statusText.textContent = '快找出這個字的部首！';
-            statusText.className = 'text-base md:text-lg font-bold text-amber-600 bg-amber-100 px-4 py-2 rounded-full w-full text-center';
+            statusText.className = 'text-sm md:text-xl font-bold text-amber-600 bg-amber-100 px-3 md:px-5 py-1.5 md:py-3 rounded-full w-full text-center';
 
             if(correctRadical === '？') {
                 optionsContainer.innerHTML = '<span class="text-gray-500 text-lg">暫無部首資料</span>';
@@ -1129,14 +1176,14 @@
                 const btn = document.createElement('button');
                 const displayOpt = opt.split(' ')[0]; 
                 
-                btn.className = 'w-20 h-20 md:w-24 md:h-24 text-4xl md:text-5xl kaishu font-bold bg-white border-2 border-gray-300 rounded-2xl shadow-sm hover:bg-gray-50 transition-all duration-300 focus:outline-none hover:-translate-y-1';
+                btn.className = 'w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 text-3xl sm:text-4xl lg:text-5xl kaishu font-bold bg-white border-2 border-gray-300 rounded-xl md:rounded-2xl shadow-sm hover:bg-gray-50 transition-all duration-300 focus:outline-none hover:-translate-y-1';
                 btn.textContent = displayOpt;
                 
                 btn.onclick = function() {
                     if (opt === correctRadical) {
                         playSound('correct');
-                        updateCombo(true); // 🌟 記錄連擊
-                        this.className = 'w-20 h-20 md:w-24 md:h-24 text-4xl md:text-5xl kaishu font-bold bg-green-100 border-4 border-green-500 text-green-700 rounded-2xl shadow-md pop transition-all duration-300';
+                        updateCombo(true); 
+                        this.className = 'w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 text-3xl sm:text-4xl lg:text-5xl kaishu font-bold bg-green-100 border-4 border-green-500 text-green-700 rounded-xl md:rounded-2xl shadow-md pop transition-all duration-300';
                         
                         const currentChar = document.getElementById('info-char').textContent;
                         if (!completedTasks.has(`radical_${currentChar}`)) {
@@ -1147,7 +1194,7 @@
                             statusText.innerHTML = '✨ 答對了！解鎖拆字與防錯密碼！';
                         }
                         
-                        statusText.className = 'text-base md:text-lg font-bold text-green-800 bg-green-200 px-4 py-2 rounded-full pop transition-all w-full text-center';
+                        statusText.className = 'text-sm md:text-xl font-bold text-green-800 bg-green-200 px-3 md:px-5 py-1.5 md:py-3 rounded-full pop transition-all w-full text-center';
                         unlockComponents(componentsArray, hintText);
                         
                         Array.from(optionsContainer.children).forEach(child => {
@@ -1160,10 +1207,10 @@
                         });
                     } else {
                         playSound('wrong');
-                        updateCombo(false); // 🌟 答錯中斷連擊
-                        this.className = 'w-20 h-20 md:w-24 md:h-24 text-4xl md:text-5xl kaishu font-bold bg-gray-100 border-2 border-gray-200 text-gray-400 rounded-2xl shake transition-all duration-300';
+                        updateCombo(false); 
+                        this.className = 'w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 text-3xl sm:text-4xl lg:text-5xl kaishu font-bold bg-gray-100 border-2 border-gray-200 text-gray-400 rounded-xl md:rounded-2xl shake transition-all duration-300';
                         statusText.innerHTML = '🤔 不對喔，再試試！';
-                        statusText.className = 'text-base md:text-lg font-bold text-red-600 bg-red-100 px-4 py-2 rounded-full transition-all w-full text-center';
+                        statusText.className = 'text-sm md:text-xl font-bold text-red-600 bg-red-100 px-3 md:px-5 py-1.5 md:py-3 rounded-full transition-all w-full text-center';
                         setTimeout(() => this.classList.remove('shake'), 400);
                     }
                 };
@@ -1208,21 +1255,98 @@
             compContainer.classList.add('pop');
         }
 
-        function addScore(points) {
+        // 🌟 觸發里程碑特效
+        window.triggerMilestoneCelebration = function(score) {
+            const modal = document.getElementById('milestone-modal');
+            const scoreText = document.getElementById('milestone-score-text');
+            const subtext = document.getElementById('milestone-subtext');
+            
+            scoreText.textContent = score;
+            
+            if (score === MAX_SCORE) {
+                subtext.innerHTML = '🎉 <b>太強了！你已經完成了所有挑戰！</b><br>你絕對是詞彙大師！👑';
+            } else {
+                subtext.innerHTML = '繼續加油，解鎖下一個成就吧！';
+            }
+            
+            playSound('milestone');
+            modal.classList.remove('hidden');
+            
+            setTimeout(() => {
+                modal.classList.add('modal-enter');
+            }, 10);
+            
+            createConfetti();
+        };
+
+        window.closeMilestone = function() {
+            const modal = document.getElementById('milestone-modal');
+            modal.classList.remove('modal-enter');
+            playSound('pop');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('confetti-container').innerHTML = ''; 
+            }, 300);
+        };
+
+        // 🌟 修正 ReferenceError：確保 updateProgress 存在並被加分呼叫
+        window.updateProgress = function() {
+            const progress = (globalScore / MAX_SCORE) * 100;
+            const bar = document.getElementById('score-progress-bar');
+            if (bar) bar.style.width = progress + '%';
+        };
+
+        window.addScore = function(points) {
             globalScore += points;
             if(globalScore > MAX_SCORE) globalScore = MAX_SCORE; 
             
             const display = document.getElementById('score-display');
-            display.textContent = globalScore + " / " + MAX_SCORE;
+            display.textContent = globalScore;
             display.classList.add('pop');
             display.style.color = '#ca8a04'; 
             
-            updateProgress(); // 🌟 更新進度條寬度
+            updateProgress(); 
+            
+            MILESTONES.forEach(milestone => {
+                if (globalScore >= milestone && !reachedMilestones.has(milestone)) {
+                    reachedMilestones.add(milestone);
+                    setTimeout(() => {
+                        triggerMilestoneCelebration(milestone);
+                    }, 500); 
+                }
+            });
 
             setTimeout(() => {
                 display.classList.remove('pop');
                 display.style.color = '';
             }, 400);
+        };
+
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
+            for(let i=0; i<50; i++) {
+                const conf = document.createElement('div');
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                conf.className = `absolute w-3 h-3 rounded-sm ${color}`;
+                conf.style.left = Math.random() * 100 + '%';
+                conf.style.top = '-10px';
+                
+                const animDuration = Math.random() * 2 + 1; 
+                const delay = Math.random() * 0.5;
+                
+                conf.animate([
+                    { transform: `translate3d(0,0,0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate3d(${Math.random()*100 - 50}px, 100vh, 0) rotate(${Math.random()*720}deg)`, opacity: 0 }
+                ], {
+                    duration: animDuration * 1000,
+                    delay: delay * 1000,
+                    easing: 'cubic-bezier(.37,0,.63,1)',
+                    fill: 'forwards'
+                });
+                
+                container.appendChild(conf);
+            }
         }
 
         function setQuizMessage(msg, colorType) {
@@ -1234,8 +1358,8 @@
                 'green': 'text-green-800 bg-green-50 border-green-500'
             };
             msgBox.innerHTML = msg;
-            msgBox.parentElement.className = `mt-5 border-l-8 p-5 rounded-r-xl shadow-sm transition-colors duration-300 ${colorMap[colorType].split(' ').slice(1).join(' ')}`;
-            msgBox.className = `font-bold text-xl flex items-center gap-3 ${colorMap[colorType].split(' ')[0]}`;
+            msgBox.parentElement.className = `mt-3 md:mt-5 border-l-8 p-3 md:p-6 rounded-r-2xl shadow-sm transition-colors duration-300 ${colorMap[colorType].split(' ').slice(1).join(' ')}`;
+            msgBox.className = `font-bold text-base md:text-2xl flex items-center gap-2 md:gap-3 ${colorMap[colorType].split(' ')[0]}`;
         }
 
         window.playAnimation = function() {
@@ -1250,6 +1374,7 @@
         window.startQuiz = function() {
             playSound('pop');
             if(writer) {
+                writer.cancelQuiz(); // 🌟 修復核心：確保每次測驗開始前清除舊的測驗狀態
                 currentMistakes = 0;
                 usedHint = false;
                 setQuizMessage('🎯 在田字格裡寫寫看！寫錯再試就好。完成可得 2 顆星星喔！⭐', 'teal');
@@ -1261,7 +1386,7 @@
                     showHintAfterMisses: 3,
                     onMistake: function(strokeData) {
                         playSound('wrong');
-                        updateCombo(false); // 🌟 寫錯中斷連擊
+                        updateCombo(false); 
                         currentMistakes++;
                         if (currentMistakes >= 3 && !usedHint) {
                             usedHint = true;
@@ -1277,7 +1402,6 @@
                     onComplete: function(summaryData) {
                         playSound('star');
                         
-                        // 🌟 完美無失誤才算入連擊
                         if (currentMistakes === 0 && !usedHint) {
                             updateCombo(true);
                         }
