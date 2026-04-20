@@ -78,6 +78,11 @@
         }
         .anim-bounce-side { animation: bounceSide 2s ease-in-out infinite; }
 
+        /* 🌟 新增：閃爍光澤動畫 (進度條使用) */
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+
         .intro-card-bg {
             background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
         }
@@ -155,13 +160,28 @@
     <!-- 右側主內容區 -->
     <div class="flex-1 flex flex-col items-center p-4 lg:p-8 overflow-y-auto relative">
         
-        <!-- 頂部：星星分數 -->
-        <div class="w-full max-w-4xl flex justify-between items-center mb-4">
-            <div class="bg-yellow-100 border-2 border-yellow-400 rounded-full px-6 py-2 shadow-sm flex items-center gap-2">
-                <span class="text-2xl">⭐</span>
-                <span class="font-bold text-yellow-700 text-xl tracking-wide">星星收集：<span id="score-display">0 / 134</span></span>
+        <!-- 🌟 升級版頂部：星星分數、連擊徽章與視覺化進度條 -->
+        <div class="w-full max-w-4xl flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div class="w-full md:w-2/3 flex flex-col gap-2">
+                <div class="flex justify-between items-end px-1">
+                    <div class="bg-yellow-100 border-2 border-yellow-400 rounded-full px-5 py-1.5 shadow-sm flex items-center gap-2">
+                        <span class="text-2xl filter drop-shadow-sm">⭐</span>
+                        <span class="font-bold text-yellow-700 text-xl tracking-wide">星星收集：<span id="score-display">0 / 134</span></span>
+                    </div>
+                    <!-- 🌟 微型獎勵：動態連擊徽章 -->
+                    <div id="combo-badge" class="hidden font-black text-white bg-gradient-to-r from-red-500 to-orange-500 px-4 py-1 rounded-full shadow-md transform rotate-2 z-50 text-xl border-2 border-white transition-all duration-300">
+                        🔥 <span id="combo-count">2</span> 連擊！
+                    </div>
+                </div>
+                <!-- 🌟 視覺化進度條 -->
+                <div class="w-full bg-white/80 rounded-full h-4 shadow-inner border border-yellow-200 overflow-hidden relative">
+                    <div id="score-progress-bar" class="bg-gradient-to-r from-yellow-300 to-yellow-500 h-full rounded-full transition-all duration-700 ease-out relative" style="width: 0%">
+                        <div class="absolute top-0 left-0 bottom-0 right-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+                    </div>
+                </div>
             </div>
-            <div id="cheer-badge" class="hidden font-bold text-white bg-gradient-to-r from-orange-400 to-red-500 px-4 py-1 rounded-full shadow-lg transform rotate-3 z-50">
+            
+            <div id="cheer-badge" class="hidden font-bold text-white bg-gradient-to-r from-orange-400 to-red-500 px-6 py-2 rounded-full shadow-lg transform -rotate-3 z-50 text-2xl">
                 太神啦！🔥
             </div>
         </div>
@@ -310,6 +330,9 @@
 
         const MAX_SCORE = 134; 
         const completedTasks = new Set();
+        
+        // 🌟 新增：連擊計數器
+        let currentCombo = 0;
 
         // --- 感官友善模式切換 (Sensory-Friendly Focus Mode) ---
         window.toggleFocusMode = function(e) {
@@ -408,6 +431,35 @@
                 badge.classList.remove('pop');
             }, 2000);
         }
+
+        // 🌟 新增：更新視覺進度條與連擊系統邏輯
+        function updateProgress() {
+            const progress = (globalScore / MAX_SCORE) * 100;
+            document.getElementById('score-progress-bar').style.width = progress + '%';
+        }
+
+        window.updateCombo = function(isCorrect) {
+            const badge = document.getElementById('combo-badge');
+            const countDisplay = document.getElementById('combo-count');
+            
+            if (isCorrect) {
+                currentCombo++;
+                if (currentCombo >= 2) {
+                    countDisplay.textContent = currentCombo;
+                    badge.classList.remove('hidden', 'pop');
+                    void badge.offsetWidth; 
+                    badge.classList.add('pop');
+                    
+                    // 每逢 3 連擊，額外觸發一次強力讚美
+                    if (currentCombo % 3 === 0) {
+                        showCheer();
+                    }
+                }
+            } else {
+                currentCombo = 0;
+                badge.classList.add('hidden');
+            }
+        };
 
         // 🌟 字詞與難度設定 (1: 初階, 2: 中階, 3: 挑戰)
         const wordDataList = [
@@ -726,6 +778,7 @@
 
             if (option === answer) {
                 playSound('correct');
+                updateCombo(true); // 🌟 記錄連擊
                 
                 if (!completedTasks.has(`sentence_${currentWord}`)) {
                     completedTasks.add(`sentence_${currentWord}`);
@@ -748,6 +801,7 @@
                 });
             } else {
                 playSound('wrong');
+                updateCombo(false); // 🌟 答錯中斷連擊
                 if(iconSpan) iconSpan.textContent = '❌';
                 btn.className = "w-full text-left px-5 py-4 bg-gray-200 text-gray-400 font-bold rounded-xl text-lg md:text-xl shake transition-all opacity-50 cursor-not-allowed flex items-center gap-3";
                 btn.disabled = true;
@@ -785,6 +839,7 @@
 
             if (option === answer) {
                 playSound('correct');
+                updateCombo(true); // 🌟 記錄連擊
                 if (!completedTasks.has(`semantic_${currentWord}`)) {
                     completedTasks.add(`semantic_${currentWord}`);
                     addScore(1);
@@ -803,6 +858,7 @@
                 });
             } else {
                 playSound('wrong');
+                updateCombo(false); // 🌟 答錯中斷連擊
                 btn.className = "px-6 py-3 bg-gray-200 text-gray-400 font-bold rounded-xl text-xl shake transition-all opacity-50 cursor-not-allowed";
                 btn.disabled = true;
                 feedback.innerHTML = `🤔 不太對喔，再想想看！`;
@@ -1030,8 +1086,8 @@
                 strokeAnimationSpeed: 1.5,
                 delayBetweenStrokes: 100,
                 showOutline: true,
-                strokeColor: '#b91c1c', 
-                radicalColor: '#0f766e', 
+                strokeColor: '#b91c1c', // 保持主體為深紅色
+                radicalColor: '#14b8a6', // 🌟 升級：將部首改為明亮的 teal-500，強烈視覺對比
                 outlineColor: '#e5e7eb',
                 drawingWidth: 30,
                 charDataLoader: function(c, onComplete) {
@@ -1079,6 +1135,7 @@
                 btn.onclick = function() {
                     if (opt === correctRadical) {
                         playSound('correct');
+                        updateCombo(true); // 🌟 記錄連擊
                         this.className = 'w-20 h-20 md:w-24 md:h-24 text-4xl md:text-5xl kaishu font-bold bg-green-100 border-4 border-green-500 text-green-700 rounded-2xl shadow-md pop transition-all duration-300';
                         
                         const currentChar = document.getElementById('info-char').textContent;
@@ -1103,6 +1160,7 @@
                         });
                     } else {
                         playSound('wrong');
+                        updateCombo(false); // 🌟 答錯中斷連擊
                         this.className = 'w-20 h-20 md:w-24 md:h-24 text-4xl md:text-5xl kaishu font-bold bg-gray-100 border-2 border-gray-200 text-gray-400 rounded-2xl shake transition-all duration-300';
                         statusText.innerHTML = '🤔 不對喔，再試試！';
                         statusText.className = 'text-base md:text-lg font-bold text-red-600 bg-red-100 px-4 py-2 rounded-full transition-all w-full text-center';
@@ -1158,6 +1216,9 @@
             display.textContent = globalScore + " / " + MAX_SCORE;
             display.classList.add('pop');
             display.style.color = '#ca8a04'; 
+            
+            updateProgress(); // 🌟 更新進度條寬度
+
             setTimeout(() => {
                 display.classList.remove('pop');
                 display.style.color = '';
@@ -1200,6 +1261,7 @@
                     showHintAfterMisses: 3,
                     onMistake: function(strokeData) {
                         playSound('wrong');
+                        updateCombo(false); // 🌟 寫錯中斷連擊
                         currentMistakes++;
                         if (currentMistakes >= 3 && !usedHint) {
                             usedHint = true;
@@ -1214,6 +1276,12 @@
                     },
                     onComplete: function(summaryData) {
                         playSound('star');
+                        
+                        // 🌟 完美無失誤才算入連擊
+                        if (currentMistakes === 0 && !usedHint) {
+                            updateCombo(true);
+                        }
+                        
                         showCheer(); 
                         
                         const currentChar = document.getElementById('info-char').textContent;
