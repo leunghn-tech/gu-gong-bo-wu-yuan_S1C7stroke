@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>中文筆順與部首學習網 - SEN 友善版</title>
-    <!-- 引入 Tailwind CSS 作為版面設計 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Hanzi Writer 筆順核心庫 -->
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
     <style>
         body {
@@ -23,7 +21,6 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* 互動與震動動畫 */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             20% { transform: translateX(-4px); }
@@ -53,7 +50,6 @@
         }
         .fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
-        /* 視覺化引入 (模擬 GIF 動畫) */
         @keyframes floatAnim {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-15px); }
@@ -78,7 +74,6 @@
         }
         .anim-bounce-side { animation: bounceSide 2s ease-in-out infinite; }
 
-        /* 閃爍光澤動畫 (進度條使用) */
         @keyframes shimmer {
             100% { transform: translateX(100%); }
         }
@@ -109,7 +104,6 @@
             filter: brightness(1.1);
         }
 
-        /* 感官友善 / 專注模式樣式 (Sensory-Friendly Mode) */
         body.focus-mode {
             background-color: #f3f4f6; 
         }
@@ -128,7 +122,6 @@
             transform: none !important;
         }
 
-        /* 模態框漸變動畫 */
         .modal-enter { opacity: 1 !important; pointer-events: auto !important; }
         .modal-enter > div { transform: scale(1) !important; }
     </style>
@@ -186,15 +179,19 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- 階段一：視覺化情境引入區 -->
+        <!-- 階段一：視覺化情境引入區 (精簡文字版) -->
         <!-- ========================================== -->
         <div id="intro-section" class="w-full max-w-4xl mx-auto mt-4 md:mt-10 flex flex-col items-center justify-center fade-in-up px-2">
             <div class="intro-card-bg border-4 border-teal-200 rounded-3xl p-6 md:p-12 shadow-xl w-full flex flex-col items-center text-center relative overflow-hidden transition-colors">
                 <span class="absolute top-3 left-3 md:top-5 md:left-5 bg-teal-500 text-white px-3 py-1 rounded-full font-bold text-xs md:text-base shadow-sm tracking-widest">情境猜一猜</span>
                 
-                <div id="intro-visual" class="text-7xl md:text-9xl my-8 md:my-10 filter drop-shadow-xl anim-pulse"></div>
-                <div id="intro-context" class="text-xl md:text-3xl text-gray-700 font-bold leading-relaxed mb-5 md:mb-8"></div>
-                <div id="intro-question" class="text-lg md:text-2xl text-teal-800 font-bold bg-white/70 px-4 py-3 md:px-8 md:py-5 rounded-2xl border border-teal-100 shadow-sm mb-6 md:mb-10 w-full max-w-2xl mx-auto"></div>
+                <div id="intro-visual" class="text-7xl md:text-9xl my-6 md:my-10 filter drop-shadow-xl anim-pulse"></div>
+                
+                <div class="bg-white/80 px-5 py-3 md:px-8 md:py-4 rounded-2xl shadow-sm mb-4 md:mb-6 w-full max-w-2xl mx-auto border border-teal-100 flex flex-col gap-2">
+                    <div id="intro-context" class="text-xl md:text-3xl text-gray-800 font-bold leading-relaxed text-center"></div>
+                </div>
+
+                <div id="intro-question" class="text-2xl md:text-4xl text-teal-800 font-black mb-6 md:mb-10 w-full max-w-2xl mx-auto tracking-wide"></div>
                 
                 <button onclick="revealWord()" class="bg-gradient-to-b from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-white text-xl md:text-2xl font-bold py-3 px-8 md:py-5 md:px-12 rounded-full shadow-lg transform transition-transform hover:scale-105 active:scale-95 flex items-center gap-3">
                     <span>💡</span> 揭曉答案並學寫字
@@ -341,7 +338,6 @@
         let currentFilter = 'all';
         let currentCombo = 0;
 
-        // 🌟 里程碑設定 (總分134)
         const MAX_SCORE = 134; 
         const MILESTONES = [50, 100, 134];
         const reachedMilestones = new Set();
@@ -453,7 +449,6 @@
             }, 2000);
         }
 
-        // 🌟 修正 ReferenceError：確保 updateProgress 在全域可見
         window.updateProgress = function() {
             const progress = (globalScore / MAX_SCORE) * 100;
             const bar = document.getElementById('score-progress-bar');
@@ -491,28 +486,29 @@
             { word: "彩畫絢麗", level: 3 }, { word: "玲瓏奇巧", level: 3 }, { word: "宏大壯麗", level: 3 }
         ];
 
+        // 🌟 極簡版情境引入 (減少文字，聚焦詞性與動作) 🌟
         const wordIntros = {
-            "玲瓏": { icon: "💎", anim: "anim-pulse", ctx: "在香港藝術館裡，展示著一件雕工十分細緻、閃閃發光的玉器。", q: "你會怎麼形容這個精緻的藝術品？" },
-            "建築": { icon: "🏗️", anim: "anim-float", ctx: "在香港的街道上，搭棚師傅熟練地架起竹棚，讓工人們一層層把高樓大廈建起來。", q: "他們正在進行什麼工程？" },
-            "輝煌": { icon: "✨", anim: "anim-pulse", ctx: "每晚八點的維多利亞港，兩岸大廈的燈光同時亮起，金光閃閃，非常耀眼。", q: "這片夜景看起來怎麼樣？" },
-            "彩畫絢麗": { icon: "🎨", anim: "anim-float", ctx: "走進黃大仙祠，抬頭看見屋頂畫滿了紅色、金色和綠色等鮮豔亮眼的圖案。", q: "這些畫的顏色給你什麼感覺？" },
-            "玲瓏奇巧": { icon: "🧩", anim: "anim-spin-slow", ctx: "中秋節時，大坑的師傅手工紮出了一條結構複雜、栩栩如生的火龍。", q: "這項傳統手工藝是不是很特別又精緻？" },
-            "宏大壯麗": { icon: "🌉", anim: "anim-float", ctx: "站在港珠澳大橋前，看著這條跨越無邊大海的巨大橋樑，讓人覺得自己很渺小。", q: "這項宏偉的工程給你什麼感覺？" },
-            "筆直": { icon: "📏", anim: "anim-pulse", ctx: "從赤鱲角機場的跑道看過去，平坦的路面一直向前延伸，完全沒有轉彎。", q: "這條跑道長得怎麼樣？" },
-            "寬廣": { icon: "🏞️", anim: "anim-float", ctx: "站在西貢的郊野公園草原上，往四周看都沒有高樓大廈阻擋，一眼望不到盡頭。", q: "這裡的空間感覺如何？" },
-            "彎彎": { icon: "🌙", anim: "anim-bounce-side", ctx: "太平山上的山路蜿蜒曲折，而淺水灣的海岸線也像一個新月。", q: "它們的形狀是怎樣的？" },
-            "矗立": { icon: "🗼", anim: "anim-float", ctx: "中環的中銀大廈就像一把巨大的寶劍，高高地指向天空。", q: "這棟大廈是怎麼站在那裡的？" },
-            "繚繞": { icon: "🌫️", anim: "anim-spin-slow", ctx: "冬天的天壇大佛旁邊起霧了，白色的雲霧在半山腰輕輕地盤旋飄動。", q: "這些霧氣是怎麼運動的？" },
-            "圍繞": { icon: "🔄", anim: "anim-spin-slow", ctx: "在中環海濱的摩天輪上，一個個車廂排成一個大圓圈，不斷轉動。", q: "這些車廂排成怎樣的形狀？" },
-            "湛藍": { icon: "🌊", anim: "anim-pulse", ctx: "天氣晴朗時，西貢清水灣的海水顏色非常深，呈現像寶石一樣的藍色。", q: "這是什麼樣的藍色？" },
-            "襯映": { icon: "🌅", anim: "anim-float", ctx: "古老的紅色帆船在維港航行，背後全是充滿現代感的玻璃幕牆大廈。", q: "這兩種新舊風景放在一起有什麼效果？" },
-            "色彩鮮明": { icon: "🌈", anim: "anim-pulse", ctx: "旺角街道上掛滿了紅、黃、綠色的霓虹燈招牌，在黑夜中特別引人注目。", q: "這些招牌的顏色看起來怎麼樣？" },
-            "儀仗": { icon: "💂", anim: "anim-float", ctx: "在金紫荊廣場的升旗儀式上，有一群穿著整齊制服、拿著禮賓槍走正步的警察隊伍。", q: "這是什麼樣的隊伍？" }
+            "玲瓏": { icon: "💎", anim: "anim-pulse", ctx: "💡 提示：形容東西小巧又精緻。", q: "🤔 這是什麼形容詞？" },
+            "建築": { icon: "🏗️", anim: "anim-float", ctx: "💡 提示：工人一層層蓋房子的動作，或蓋好的樓房。", q: "🤔 這是什麼詞彙？" },
+            "輝煌": { icon: "✨", anim: "anim-pulse", ctx: "💡 提示：形容燈光或成績非常閃亮耀眼。", q: "🤔 這是什麼形容詞？" },
+            "彩畫絢麗": { icon: "🎨", anim: "anim-float", ctx: "💡 提示：形容圖畫的顏色非常鮮艷漂亮。", q: "🤔 這是什麼形容詞？" },
+            "玲瓏奇巧": { icon: "🧩", anim: "anim-spin-slow", ctx: "💡 提示：形容物品小巧，而且機關特別。", q: "🤔 這是什麼形容詞？" },
+            "宏大壯麗": { icon: "🌉", anim: "anim-float", ctx: "💡 提示：形容大橋或風景超級巨大、有氣勢。", q: "🤔 這是什麼形容詞？" },
+            "筆直": { icon: "📏", anim: "anim-pulse", ctx: "💡 提示：形容馬路像間尺一樣，完全沒有彎曲。", q: "🤔 這是什麼形容詞？" },
+            "寬廣": { icon: "🏞️", anim: "anim-float", ctx: "💡 提示：形容大草原的面積很大，一眼望不到邊。", q: "🤔 這是什麼形容詞？" },
+            "彎彎": { icon: "🌙", anim: "anim-bounce-side", ctx: "💡 提示：形容月亮或小路的形狀有弧度。", q: "🤔 這是什麼形容詞？" },
+            "矗立": { icon: "🗼", anim: "anim-float", ctx: "💡 提示：形容高樓大廈直直地站在地上。", q: "🤔 這是什麼動作？" },
+            "繚繞": { icon: "🌫️", anim: "anim-spin-slow", ctx: "💡 提示：煙霧或聲音在空中轉圈圈，不散開。", q: "🤔 這是什麼動作？" },
+            "圍繞": { icon: "🔄", anim: "anim-spin-slow", ctx: "💡 提示：大家手牽手，圍成一個大圈圈。", q: "🤔 這是什麼動作？" },
+            "湛藍": { icon: "🌊", anim: "anim-pulse", ctx: "💡 提示：形容海水非常深、非常美的藍色。", q: "🤔 這是什麼形容詞？" },
+            "襯映": { icon: "🌅", anim: "anim-float", ctx: "💡 提示：兩樣東西放在一起，互相對比配搭。", q: "🤔 這是什麼動作？" },
+            "色彩鮮明": { icon: "🌈", anim: "anim-pulse", ctx: "💡 提示：形容霓虹燈的顏色很多，超級亮眼。", q: "🤔 這是什麼形容詞？" },
+            "儀仗": { icon: "💂", anim: "anim-float", ctx: "💡 提示：升旗禮上，穿著整齊制服的護衛隊。", q: "🤔 這是什麼名詞？" }
         };
 
         const wordExplanations = {
             "玲瓏": { text: "精巧細緻的樣子。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>exquisite (adj.)</span>", icon: "💎" },
-            "建築": { text: "建造房屋或指建築物本身。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>building (n.)</span>", icon: "🏛️" },
+            "建築": { text: "建造房屋或指建築物本身。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>building (n./v.)</span>", icon: "🏛️" },
             "輝煌": { text: "光輝燦爛，非常傑出。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>glorious (adj.)</span>", icon: "✨" },
             "彩畫絢麗": { text: "彩色圖畫鮮明耀眼。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>beautiful (adj.)</span>", icon: "🎨" },
             "玲瓏奇巧": { text: "小巧精緻、奇特巧妙。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>exquisite (adj.)</span>", icon: "🧩" },
@@ -520,13 +516,13 @@
             "筆直": { text: "像筆桿一樣，非常直。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>straight (adj.)</span>", icon: "📏" },
             "寬廣": { text: "面積很大、很寬闊。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>spacious (adj.)</span>", icon: "🏞️" },
             "彎彎": { text: "彎曲的樣子。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>curved (adj.)</span>", icon: "🌙" },
-            "矗立": { text: "高聳地直立著。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>standing (n.)</span>", icon: "🗼" },
+            "矗立": { text: "高聳地直立著。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>stand tall (v.)</span>", icon: "🗼" },
             "繚繞": { text: "盤旋、圍繞。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>curl up (v.)</span>", icon: "🌫️" },
             "圍繞": { text: "包圍、環繞在四周。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>surround (v.)</span>", icon: "🔄" },
             "湛藍": { text: "非常深的藍色。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>deep blue (adj.)</span>", icon: "🌊" },
-            "襯映": { text: "互相襯托，相映成趣。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>contrast (v.)</span>", icon: "🌄" },
+            "襯映": { text: "互相襯托，相映成趣。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>contrast (v.)</span>", icon: "🌅" },
             "色彩鮮明": { text: "顏色鮮亮耀眼。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>colorful (adj.)</span>", icon: "🌈" },
-            "儀仗": { text: "儀式上的護衛隊伍或武器。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>ceremony weapory (n.)</span>", icon: "💂" }
+            "儀仗": { text: "儀式上的護衛隊伍或武器。<br/><span class='text-amber-700 text-lg md:text-2xl font-bold mt-2 block'>guard of honor (n.)</span>", icon: "💂" }
         };
 
         const wordAdvanced = {
@@ -720,15 +716,18 @@
 
         window.showVisualIntro = function(word) {
             currentWord = word;
-            
             preloadCharacterData(word);
             
-            const intro = wordIntros[word] || { icon: "❓", anim: "anim-pulse", ctx: "這是一個神祕的詞彙。", q: "你猜猜是什麼意思？" };
+            const intro = wordIntros[word] || { icon: "❓", anim: "anim-pulse", ctx: "💡 提示：這個詞語非常特別。", q: "🤔 這是什麼詞彙？" };
             
             document.getElementById('intro-visual').textContent = intro.icon;
-            document.getElementById('intro-visual').className = `text-7xl md:text-9xl my-8 md:my-10 filter drop-shadow-xl ${intro.anim}`;
-            document.getElementById('intro-context').textContent = intro.ctx;
-            document.getElementById('intro-question').textContent = "💬 " + intro.q;
+            document.getElementById('intro-visual').className = `text-8xl md:text-9xl my-6 md:my-10 filter drop-shadow-xl ${intro.anim}`;
+            
+            // 💡 套用精簡版設計
+            const ctxEl = document.getElementById('intro-context');
+            ctxEl.innerHTML = `<div class="bg-white/90 px-6 py-4 rounded-2xl shadow-sm border border-amber-100 max-w-xl mx-auto"><span class="text-xl md:text-3xl text-gray-800 font-bold leading-relaxed">${intro.ctx}</span></div>`;
+            
+            document.getElementById('intro-question').innerHTML = `<span class="text-2xl md:text-4xl">${intro.q}</span>`;
             
             document.getElementById('learning-section').classList.add('hidden');
             document.getElementById('intro-section').classList.remove('hidden');
@@ -1255,7 +1254,6 @@
             compContainer.classList.add('pop');
         }
 
-        // 🌟 觸發里程碑特效
         window.triggerMilestoneCelebration = function(score) {
             const modal = document.getElementById('milestone-modal');
             const scoreText = document.getElementById('milestone-score-text');
@@ -1289,79 +1287,6 @@
             }, 300);
         };
 
-        // 🌟 修正 ReferenceError：確保 updateProgress 存在並被加分呼叫
-        window.updateProgress = function() {
-            const progress = (globalScore / MAX_SCORE) * 100;
-            const bar = document.getElementById('score-progress-bar');
-            if (bar) bar.style.width = progress + '%';
-        };
-
-        window.addScore = function(points) {
-            globalScore += points;
-            if(globalScore > MAX_SCORE) globalScore = MAX_SCORE; 
-            
-            const display = document.getElementById('score-display');
-            display.textContent = globalScore;
-            display.classList.add('pop');
-            display.style.color = '#ca8a04'; 
-            
-            updateProgress(); 
-            
-            MILESTONES.forEach(milestone => {
-                if (globalScore >= milestone && !reachedMilestones.has(milestone)) {
-                    reachedMilestones.add(milestone);
-                    setTimeout(() => {
-                        triggerMilestoneCelebration(milestone);
-                    }, 500); 
-                }
-            });
-
-            setTimeout(() => {
-                display.classList.remove('pop');
-                display.style.color = '';
-            }, 400);
-        };
-
-        function createConfetti() {
-            const container = document.getElementById('confetti-container');
-            const colors = ['bg-red-500', 'bg-blue-500', 'bg-yellow-400', 'bg-green-500', 'bg-purple-500', 'bg-pink-500'];
-            for(let i=0; i<50; i++) {
-                const conf = document.createElement('div');
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                conf.className = `absolute w-3 h-3 rounded-sm ${color}`;
-                conf.style.left = Math.random() * 100 + '%';
-                conf.style.top = '-10px';
-                
-                const animDuration = Math.random() * 2 + 1; 
-                const delay = Math.random() * 0.5;
-                
-                conf.animate([
-                    { transform: `translate3d(0,0,0) rotate(0deg)`, opacity: 1 },
-                    { transform: `translate3d(${Math.random()*100 - 50}px, 100vh, 0) rotate(${Math.random()*720}deg)`, opacity: 0 }
-                ], {
-                    duration: animDuration * 1000,
-                    delay: delay * 1000,
-                    easing: 'cubic-bezier(.37,0,.63,1)',
-                    fill: 'forwards'
-                });
-                
-                container.appendChild(conf);
-            }
-        }
-
-        function setQuizMessage(msg, colorType) {
-            const msgBox = document.getElementById('quiz-message');
-            const colorMap = {
-                'blue': 'text-blue-800 bg-blue-50 border-blue-400',
-                'teal': 'text-teal-800 bg-teal-50 border-teal-500',
-                'red': 'text-red-700 bg-red-50 border-red-400',
-                'green': 'text-green-800 bg-green-50 border-green-500'
-            };
-            msgBox.innerHTML = msg;
-            msgBox.parentElement.className = `mt-3 md:mt-5 border-l-8 p-3 md:p-6 rounded-r-2xl shadow-sm transition-colors duration-300 ${colorMap[colorType].split(' ').slice(1).join(' ')}`;
-            msgBox.className = `font-bold text-base md:text-2xl flex items-center gap-2 md:gap-3 ${colorMap[colorType].split(' ')[0]}`;
-        }
-
         window.playAnimation = function() {
             playSound('pop');
             if(writer) {
@@ -1374,7 +1299,7 @@
         window.startQuiz = function() {
             playSound('pop');
             if(writer) {
-                writer.cancelQuiz(); // 🌟 修復核心：確保每次測驗開始前清除舊的測驗狀態
+                writer.cancelQuiz(); 
                 currentMistakes = 0;
                 usedHint = false;
                 setQuizMessage('🎯 在田字格裡寫寫看！寫錯再試就好。完成可得 2 顆星星喔！⭐', 'teal');
